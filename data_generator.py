@@ -1,11 +1,9 @@
 """
-data_generator.py - Generator Data Realistis Kos Mahasiswa
+data_generator.py - Generator Data Realistis Makanan Kos Mahasiswa
 ============================================================
-Menghasilkan data simulasi pengeluaran harian mahasiswa kos
-selama rentang waktu tertentu. Data meliputi:
-  - Makanan & minuman harian (warung, kantin, minimarket)
-  - Kebutuhan utilitas (listrik, air, internet)
-  - Kebutuhan pribadi (laundry, toiletries, dll.)
+Menghasilkan data simulasi pengeluaran makanan & minuman harian
+mahasiswa kos selama rentang waktu tertentu.
+Fokus: Monitoring Biaya & Nutrisi Makanan.
 """
 
 import pandas as pd
@@ -15,9 +13,9 @@ from datetime import datetime, timedelta
 
 
 def generate_dimension_data():
-    """Menghasilkan data dimensi yang realistis untuk kehidupan kos."""
+    """Menghasilkan data dimensi yang realistis untuk makanan kos."""
 
-    # --- Kategori Nutrisi ---
+    # --- Kategori Nutrisi (diperluas dengan Kalsium, Zat Besi, Vitamin C, Serat) ---
     kategori_nutrisi = pd.DataFrame({
         "id_kategori_nutrisi": [1, 2, 3, 4, 5],
         "nama_kategori_nutrisi": [
@@ -33,91 +31,87 @@ def generate_dimension_data():
         ]
     })
 
-    # --- Kategori Produk ---
+    # --- Kategori Produk (hanya makanan & minuman) ---
     kategori_produk = pd.DataFrame({
-        "id_kategori_produk": [1, 2, 3, 4, 5],
+        "id_kategori_produk": [1, 2, 3, 4],
         "nama_kategori": [
             "Makanan Pokok", "Lauk Pauk", "Jajanan & Snack",
-            "Minuman", "Utilitas & Lainnya"
+            "Minuman"
         ],
         "deskripsi": [
             "Makanan utama sehari-hari",
             "Pendamping makanan pokok",
             "Camilan dan makanan ringan",
-            "Minuman harian",
-            "Tagihan listrik, air, internet, laundry"
+            "Minuman harian"
         ]
     })
 
-    # --- Produk (dengan detail nutrisi) ---
+    # --- Produk (dengan detail nutrisi diperluas: kalsium, zat_besi, vitamin_c, serat) ---
+    #  Kolom: id, nama, kat_produk, kat_nutrisi, kalori, protein, karbo, lemak,
+    #          kalsium_mg, zat_besi_mg, vitamin_c_mg, serat_gram
     produk_data = [
         # Makanan Pokok (kat_produk=1)
-        (1, "Nasi Putih", 1, 1, 180, 4.0, 40.0, 0.3),
-        (2, "Mie Instan", 1, 1, 350, 8.0, 45.0, 14.0),
-        (3, "Nasi Goreng", 1, 1, 400, 10.0, 55.0, 15.0),
-        (4, "Nasi Uduk", 1, 1, 390, 8.0, 50.0, 16.0),
-        (5, "Lontong Sayur", 1, 1, 280, 6.0, 35.0, 12.0),
-        (6, "Bubur Ayam", 1, 2, 300, 15.0, 30.0, 10.0),
+        (1, "Nasi Putih", 1, 1, 180, 4.0, 40.0, 0.3, 10.0, 0.4, 0.0, 0.4),
+        (2, "Mie Instan", 1, 1, 350, 8.0, 45.0, 14.0, 20.0, 1.5, 0.0, 1.0),
+        (3, "Nasi Goreng", 1, 1, 400, 10.0, 55.0, 15.0, 25.0, 1.8, 2.0, 1.2),
+        (4, "Nasi Uduk", 1, 1, 390, 8.0, 50.0, 16.0, 20.0, 1.0, 0.0, 0.8),
+        (5, "Lontong Sayur", 1, 1, 280, 6.0, 35.0, 12.0, 40.0, 1.5, 5.0, 2.5),
+        (6, "Bubur Ayam", 1, 2, 300, 15.0, 30.0, 10.0, 30.0, 1.2, 0.0, 0.5),
         # Lauk Pauk (kat_produk=2)
-        (7, "Ayam Goreng", 2, 2, 260, 25.0, 5.0, 15.0),
-        (8, "Telur Dadar", 2, 2, 150, 11.0, 1.0, 11.0),
-        (9, "Tempe Goreng", 2, 2, 160, 12.0, 8.0, 10.0),
-        (10, "Tahu Goreng", 2, 2, 130, 9.0, 4.0, 9.0),
-        (11, "Ikan Goreng", 2, 2, 200, 22.0, 2.0, 11.0),
-        (12, "Rendang", 2, 4, 250, 20.0, 5.0, 17.0),
-        (13, "Soto Ayam", 2, 2, 220, 18.0, 12.0, 10.0),
+        (7, "Ayam Goreng", 2, 2, 260, 25.0, 5.0, 15.0, 15.0, 1.0, 0.0, 0.0),
+        (8, "Telur Dadar", 2, 2, 150, 11.0, 1.0, 11.0, 50.0, 1.8, 0.0, 0.0),
+        (9, "Tempe Goreng", 2, 2, 160, 12.0, 8.0, 10.0, 120.0, 2.7, 0.0, 1.4),
+        (10, "Tahu Goreng", 2, 2, 130, 9.0, 4.0, 9.0, 150.0, 1.5, 0.0, 0.5),
+        (11, "Ikan Goreng", 2, 2, 200, 22.0, 2.0, 11.0, 40.0, 1.0, 0.0, 0.0),
+        (12, "Rendang", 2, 4, 250, 20.0, 5.0, 17.0, 12.0, 3.5, 0.0, 0.3),
+        (13, "Soto Ayam", 2, 2, 220, 18.0, 12.0, 10.0, 20.0, 1.5, 3.0, 1.0),
         # Jajanan & Snack (kat_produk=3)
-        (14, "Gorengan", 3, 4, 200, 3.0, 20.0, 12.0),
-        (15, "Bakso", 3, 2, 250, 14.0, 20.0, 12.0),
-        (16, "Siomay", 3, 2, 180, 10.0, 15.0, 8.0),
-        (17, "Roti Bakar", 3, 1, 280, 6.0, 35.0, 13.0),
-        (18, "Martabak Manis", 3, 1, 450, 8.0, 55.0, 22.0),
-        (19, "Pisang Goreng", 3, 4, 170, 2.0, 25.0, 8.0),
+        (14, "Gorengan", 3, 4, 200, 3.0, 20.0, 12.0, 10.0, 0.5, 0.0, 0.8),
+        (15, "Bakso", 3, 2, 250, 14.0, 20.0, 12.0, 15.0, 2.0, 0.0, 0.5),
+        (16, "Siomay", 3, 2, 180, 10.0, 15.0, 8.0, 20.0, 1.2, 2.0, 0.8),
+        (17, "Roti Bakar", 3, 1, 280, 6.0, 35.0, 13.0, 30.0, 1.0, 0.0, 1.5),
+        (18, "Martabak Manis", 3, 1, 450, 8.0, 55.0, 22.0, 80.0, 1.5, 0.0, 1.0),
+        (19, "Pisang Goreng", 3, 4, 170, 2.0, 25.0, 8.0, 8.0, 0.3, 5.0, 1.8),
+        # Buah segar (kat_produk=3, kat_nutrisi=3: Serat & Vitamin)
+        (30, "Buah Potong", 3, 3, 60, 1.0, 15.0, 0.2, 20.0, 0.5, 40.0, 3.0),
+        (31, "Salad Buah", 3, 3, 90, 1.5, 20.0, 1.0, 35.0, 0.8, 30.0, 2.5),
+        # Sayuran (kat_produk=2, kat_nutrisi=3)
+        (32, "Sayur Bayam", 2, 3, 70, 3.0, 6.0, 2.0, 200.0, 3.5, 30.0, 3.5),
+        (33, "Tumis Kangkung", 2, 3, 80, 3.0, 5.0, 4.0, 80.0, 2.5, 20.0, 2.0),
+        (34, "Capcay", 2, 3, 120, 5.0, 10.0, 6.0, 60.0, 1.8, 15.0, 2.5),
+        (35, "Gado-Gado", 2, 3, 200, 8.0, 18.0, 12.0, 100.0, 2.5, 10.0, 4.0),
         # Minuman (kat_produk=4)
-        (20, "Es Teh Manis", 4, 5, 80, 0.0, 20.0, 0.0),
-        (21, "Kopi Sachet", 4, 5, 60, 1.0, 12.0, 1.0),
-        (22, "Air Mineral", 4, 5, 0, 0.0, 0.0, 0.0),
-        (23, "Jus Buah", 4, 5, 120, 1.0, 28.0, 0.5),
-        (24, "Es Jeruk", 4, 5, 90, 0.5, 22.0, 0.0),
-        (25, "Susu Kotak", 4, 5, 140, 5.0, 18.0, 5.0),
-        # Utilitas (kat_produk=5)
-        (26, "Token Listrik", 5, None, 0, 0, 0, 0),
-        (27, "Tagihan Air", 5, None, 0, 0, 0, 0),
-        (28, "Internet/WiFi", 5, None, 0, 0, 0, 0),
-        (29, "Laundry Kiloan", 5, None, 0, 0, 0, 0),
-        (30, "Sabun & Toiletries", 5, None, 0, 0, 0, 0),
+        (20, "Es Teh Manis", 4, 5, 80, 0.0, 20.0, 0.0, 0.0, 0.0, 0.0, 0.0),
+        (21, "Kopi Sachet", 4, 5, 60, 1.0, 12.0, 1.0, 5.0, 0.2, 0.0, 0.0),
+        (22, "Air Mineral", 4, 5, 0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0),
+        (23, "Jus Buah", 4, 5, 120, 1.0, 28.0, 0.5, 15.0, 0.5, 25.0, 1.0),
+        (24, "Es Jeruk", 4, 5, 90, 0.5, 22.0, 0.0, 10.0, 0.2, 20.0, 0.5),
+        (25, "Susu Kotak", 4, 5, 140, 5.0, 18.0, 5.0, 200.0, 0.3, 2.0, 0.0),
     ]
 
     produk = pd.DataFrame(produk_data, columns=[
         "id_produk", "nama_produk", "id_kategori_produk",
         "id_kategori_nutrisi", "kalori_per_porsi", "protein_gram",
-        "karbohidrat_gram", "lemak_gram"
+        "karbohidrat_gram", "lemak_gram",
+        "kalsium_mg", "zat_besi_mg", "vitamin_c_mg", "serat_gram"
     ])
-    # id_kategori_nutrisi bisa None untuk utilitas
     produk["id_kategori_nutrisi"] = produk["id_kategori_nutrisi"].astype("Int64")
 
-    # --- Metode Pembayaran ---
-    metode_bayar = pd.DataFrame({
-        "id_metode": [1, 2, 3, 4],
-        "nama_metode": ["Cash", "QRIS", "Transfer", "E-Wallet"],
-        "provider": ["Tunai", "QRIS Nasional", "Bank BCA/BRI", "GoPay/OVO/Dana"]
-    })
-
-    return kategori_nutrisi, kategori_produk, produk, metode_bayar
+    return kategori_nutrisi, kategori_produk, produk
 
 
 def generate_raw_transactions(start_date: str, end_date: str, seed: int = 42):
     """
     Menghasilkan log transaksi mentah harian yang realistis.
+    Hanya makanan & minuman (tanpa utilitas).
     Pola pengeluaran:
       - Mahasiswa makan 2-3x sehari + 1-2 snack/minuman
-      - Utilitas dibayar 1-2x sebulan
       - Pengeluaran weekend sedikit lebih bervariasi
     """
     np.random.seed(seed)
     random.seed(seed)
 
-    _, _, produk_df, _ = generate_dimension_data()
+    _, _, produk_df = generate_dimension_data()
 
     # Harga realistis per produk (Rupiah)
     harga_map = {
@@ -134,30 +128,26 @@ def generate_raw_transactions(start_date: str, end_date: str, seed: int = 42):
         "Es Teh Manis": (3000, 5000), "Kopi Sachet": (2000, 4000),
         "Air Mineral": (3000, 5000), "Jus Buah": (8000, 15000),
         "Es Jeruk": (5000, 8000), "Susu Kotak": (5000, 8000),
-        "Token Listrik": (50000, 100000), "Tagihan Air": (25000, 50000),
-        "Internet/WiFi": (50000, 100000), "Laundry Kiloan": (15000, 30000),
-        "Sabun & Toiletries": (10000, 30000),
+        "Buah Potong": (5000, 10000), "Salad Buah": (10000, 18000),
+        "Sayur Bayam": (3000, 6000), "Tumis Kangkung": (3000, 6000),
+        "Capcay": (8000, 15000), "Gado-Gado": (10000, 18000),
     }
 
     kategori_map = dict(zip(
         produk_df["nama_produk"],
         produk_df["id_kategori_produk"].map({
             1: "Makanan Pokok", 2: "Lauk Pauk", 3: "Jajanan & Snack",
-            4: "Minuman", 5: "Utilitas & Lainnya"
+            4: "Minuman"
         })
     ))
 
     makanan_produk = produk_df[produk_df["id_kategori_produk"].isin([1, 2, 3])]["nama_produk"].tolist()
     minuman_produk = produk_df[produk_df["id_kategori_produk"] == 4]["nama_produk"].tolist()
-    utilitas_produk = produk_df[produk_df["id_kategori_produk"] == 5]["nama_produk"].tolist()
-
-    metode_list = ["Cash", "QRIS", "Transfer", "E-Wallet"]
-    metode_weights = [0.4, 0.3, 0.15, 0.15]
 
     catatan_options = [
         "Sarapan", "Makan siang", "Makan malam", "Ngemil sore",
         "Beli di kantin", "Beli di warung", "Order online",
-        "Belanja minimarket", "Bayar bulanan", "Stok mingguan",
+        "Belanja minimarket", "Stok mingguan",
         "", ""  # beberapa tanpa catatan
     ]
 
@@ -185,7 +175,6 @@ def generate_raw_transactions(start_date: str, end_date: str, seed: int = 42):
                 "jumlah": jumlah,
                 "harga": float(harga),
                 "total": float(harga * jumlah),
-                "metode_bayar": random.choices(metode_list, weights=metode_weights)[0],
                 "catatan": random.choice(catatan_options)
             })
             log_id += 1
@@ -206,33 +195,9 @@ def generate_raw_transactions(start_date: str, end_date: str, seed: int = 42):
                 "jumlah": jumlah,
                 "harga": float(harga),
                 "total": float(harga * jumlah),
-                "metode_bayar": random.choices(metode_list, weights=metode_weights)[0],
                 "catatan": random.choice(catatan_options)
             })
             log_id += 1
-
-        # Utilitas: sekitar tanggal 1-5 dan 15-20 tiap bulan
-        if current.day in range(1, 6) or current.day in range(15, 21):
-            if random.random() < 0.3:  # ~30% chance per hari di range ini
-                produk_name = random.choice(utilitas_produk)
-                harga_range = harga_map.get(produk_name, (20000, 50000))
-                harga = random.randint(harga_range[0] // 1000, harga_range[1] // 1000) * 1000
-
-                transactions.append({
-                    "log_id": log_id,
-                    "tanggal_transaksi": current.date(),
-                    "nama_produk": produk_name,
-                    "kategori": "Utilitas & Lainnya",
-                    "jumlah": 1,
-                    "harga": float(harga),
-                    "total": float(harga),
-                    "metode_bayar": random.choices(
-                        ["Transfer", "E-Wallet", "Cash"],
-                        weights=[0.5, 0.3, 0.2]
-                    )[0],
-                    "catatan": "Bayar bulanan"
-                })
-                log_id += 1
 
         current += timedelta(days=1)
 
@@ -255,7 +220,7 @@ def initialize_warehouse(con, start_date="2025-01-01", end_date="2025-06-30"):
     create_snowflake_schema(con)
 
     # 2. Load dimensi
-    kat_nutrisi, kat_produk, produk, metode = generate_dimension_data()
+    kat_nutrisi, kat_produk, produk = generate_dimension_data()
 
     con.register("df_kn", kat_nutrisi)
     con.execute("INSERT OR IGNORE INTO dim_kategori_nutrisi SELECT * FROM df_kn")
@@ -268,10 +233,6 @@ def initialize_warehouse(con, start_date="2025-01-01", end_date="2025-06-30"):
     con.register("df_p", produk)
     con.execute("INSERT OR IGNORE INTO dim_produk SELECT * FROM df_p")
     con.unregister("df_p")
-
-    con.register("df_m", metode)
-    con.execute("INSERT OR IGNORE INTO dim_metode_bayar SELECT * FROM df_m")
-    con.unregister("df_m")
 
     # 3. Generate raw data (Extract + Load)
     raw_df = generate_raw_transactions(start_date, end_date)
