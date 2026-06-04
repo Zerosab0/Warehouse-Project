@@ -110,8 +110,19 @@ with st.sidebar:
     st.caption("Monitoring Biaya & Nutrisi Makanan")
     st.markdown("---")
 
+    tahun_list = con.execute(
+        "SELECT DISTINCT tahun FROM dim_waktu ORDER BY tahun"
+    ).fetchdf()
+
+    if not tahun_list.empty:
+        tahun_options = tahun_list["tahun"].tolist()
+        tahun = st.selectbox("Tahun", tahun_options, index=len(tahun_options) - 1)
+    else:
+        tahun = 2025
+
     bulan_list = con.execute(
-        "SELECT DISTINCT bulan, nama_bulan FROM dim_waktu ORDER BY bulan"
+        "SELECT DISTINCT bulan, nama_bulan FROM dim_waktu WHERE tahun = ? ORDER BY bulan",
+        [tahun]
     ).fetchdf()
 
     if not bulan_list.empty:
@@ -122,8 +133,6 @@ with st.sidebar:
         selected_bulan = bulan_options[selected_bulan_name]
     else:
         selected_bulan, selected_bulan_name = 1, "January"
-
-    tahun = 2025
 
     st.markdown("---")
     st.caption("Arsitektur")
@@ -152,6 +161,7 @@ st.markdown("""<div class="main-header">
 st.markdown('<div class="section-label">Ringkasan Biaya Makanan</div>', unsafe_allow_html=True)
 
 ringkasan = get_ringkasan_bulanan(con)
+ringkasan = ringkasan[ringkasan["tahun"] == tahun]
 bulan_data = ringkasan[ringkasan["bulan"] == selected_bulan]
 
 if not bulan_data.empty:
@@ -188,7 +198,7 @@ with c4:
     st.markdown(f"""<div class="kpi-card">
         <div class="kpi-label">Total Seluruh Periode</div>
         <div class="kpi-value">Rp {total_all:,.0f}</div>
-        <div class="kpi-sub">Jan — Jun 2025</div>
+        <div class="kpi-sub">Tahun {tahun}</div>
     </div>""", unsafe_allow_html=True)
 
 
@@ -243,10 +253,11 @@ CHART_LAYOUT = dict(
 
 with col_chart1:
     harian = get_tren_harian(con)
-    harian_f = harian[pd.to_datetime(harian["tanggal"]).dt.month == selected_bulan]
+    harian_dt = pd.to_datetime(harian["tanggal"])
+    harian_f = harian[(harian_dt.dt.month == selected_bulan) & (harian_dt.dt.year == tahun)]
     if not harian_f.empty:
         fig = px.area(harian_f, x="tanggal", y="total_pengeluaran",
-            title=f"Pengeluaran Harian — {selected_bulan_name} 2025",
+            title=f"Pengeluaran Harian — {selected_bulan_name} {tahun}",
             labels={"tanggal": "Tanggal", "total_pengeluaran": "Total (Rp)"},
             color_discrete_sequence=["#6366f1"])
         fig.update_layout(**CHART_LAYOUT)
@@ -300,7 +311,8 @@ with col_d2:
 st.markdown('<div class="section-label">Tren Konsumsi Gizi Harian</div>', unsafe_allow_html=True)
 
 nutrisi = get_nutrisi_harian(con)
-nutrisi_f = nutrisi[pd.to_datetime(nutrisi["tanggal"]).dt.month == selected_bulan]
+nutrisi_dt = pd.to_datetime(nutrisi["tanggal"])
+nutrisi_f = nutrisi[(nutrisi_dt.dt.month == selected_bulan) & (nutrisi_dt.dt.year == tahun)]
 
 if not nutrisi_f.empty:
     cn1, cn2, cn3, cn4 = st.columns(4)
@@ -322,7 +334,7 @@ if not nutrisi_f.empty:
             name=label, line=dict(color=color, width=1.5), mode="lines"
         ))
     fig.update_layout(
-        title=f"Tren Gizi — {selected_bulan_name} 2025", **CHART_LAYOUT,
+        title=f"Tren Gizi — {selected_bulan_name} {tahun}", **CHART_LAYOUT,
         legend=dict(orientation="h", yanchor="bottom", y=1.02)
     )
     st.plotly_chart(fig, use_container_width=True)
