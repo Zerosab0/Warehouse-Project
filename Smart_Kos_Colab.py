@@ -8,7 +8,7 @@
 # ========== CELL 1 ==========
 # Salin baris-baris berikut (tanpa tanda #) ke cell pertama:
 #
-# !git clone https://github.com/NAMA_USER/Warehouse-Project.git
+# !git clone https://github.com/Zerosab0/Warehouse-Project.git
 # %cd Warehouse-Project
 # !pip install -q streamlit duckdb pandas plotly pyngrok
 
@@ -36,7 +36,7 @@ time.sleep(8)
 
 public_url = ngrok.connect(8501)
 print("=" * 50)
-print(f"🏠 BUKA DASHBOARD: {public_url}")
+print(f"BUKA DASHBOARD: {public_url}")
 print("=" * 50)
 
 # Biarkan berjalan, jangan close cell ini
